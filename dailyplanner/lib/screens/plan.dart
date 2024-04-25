@@ -16,6 +16,39 @@ class Plan extends StatefulWidget {
 class _PlanState extends State<Plan> {
   List<bool> checkedStatus = [true, false, false, false];
 
+  _deletePopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Conferma'),
+          content: Text('Sei sicuro di voler procedere?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('No');
+              },
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('Sì');
+              },
+              child: Text('Sì'),
+            ),
+          ],
+        );
+      },
+    ).then((value) {
+      // Gestisci la risposta dopo la chiusura del popup
+      if (value == 'Sì') {
+        print('Hai scelto Sì');
+      } else if (value == 'No') {
+        print('Hai scelto No');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +62,16 @@ class _PlanState extends State<Plan> {
           Navigator.push(
             context,
             PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) => AddTask(),
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: Duration.zero,
+              pageBuilder: (context, animation1, animation2) => AddTask(),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
             ),
           );
         },
-        child: Icon(Icons.add, color: Colors.white,),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         backgroundColor: Colors.black,
       ),
       body: ListView(
@@ -56,11 +92,11 @@ class _PlanState extends State<Plan> {
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
-                          context, 
+                          context,
                           PageRouteBuilder(
-                              pageBuilder: (context, animation1, animation2) => TomorrowPlan(),
-                              transitionDuration: Duration.zero,
-                              reverseTransitionDuration: Duration.zero,
+                            pageBuilder: (context, animation1, animation2) => TomorrowPlan(),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },
@@ -80,6 +116,9 @@ class _PlanState extends State<Plan> {
                       setState(() {
                         checkedStatus[0] = !checkedStatus[0];
                       });
+                    },
+                    onLongPress: () {
+                      _deletePopup();
                     },
                     child: CustomCheckBox(
                       time: "08:22 AM",
