@@ -1,10 +1,12 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, curly_braces_in_flow_control_structures
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, curly_braces_in_flow_control_structures, use_build_context_synchronously, sized_box_for_whitespace
 
+import 'package:dailyplanner/utils/database-helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
-  const AddTask({super.key});
+  final int daysToAdd;
+  const AddTask({super.key, this.daysToAdd = 0});
 
   @override
   State<AddTask> createState() => _AddTaskState();
@@ -17,8 +19,22 @@ class _AddTaskState extends State<AddTask> {
   FocusNode focusNode = FocusNode();
   bool isFocused = false;
 
-  void initstate() {
+  bool loadingSave = false;
+  final TextEditingController taskController = TextEditingController();
+
+  @override
+  void initState() {
     super.initState();
+
+    if (widget.daysToAdd == 0) {
+      setState(() {
+        selectedDate = DateTime.now();
+      });
+    } else {
+      setState(() {
+        selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+      });
+    }
 
     focusNode.addListener(() {
       setState(() {
@@ -32,7 +48,7 @@ class _AddTaskState extends State<AddTask> {
     DateFormat outputFormat = DateFormat("dd/MM/yyyy");
     DateTime inputDate = inputFormat.parse(inputDateStr);
     String outputDateStr = outputFormat.format(inputDate);
-    
+
     return outputDateStr;
   }
 
@@ -60,6 +76,30 @@ class _AddTaskState extends State<AddTask> {
       setState(() {
         selectedTime = pickedTime;
       });
+  }
+
+  String formatTimeOfDay(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final time = DateTime(today.year, today.month, today.day, timeOfDay.hour, timeOfDay.minute);
+
+    // Formattare l'orario come "hh:mm"
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+  }
+
+  _saveTask() async {
+    setState(() {
+      loadingSave = true;
+    });
+
+    await DatabaseHelper.instance.insertTask(taskController.text, selectedDate.toLocal().toString().split(' ')[0], formatTimeOfDay(selectedTime));
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    taskController.dispose();
+    super.dispose();
   }
 
   @override
@@ -106,6 +146,7 @@ class _AddTaskState extends State<AddTask> {
                 SizedBox(height: 30),
                 TextField(
                   focusNode: focusNode,
+                  controller: taskController,
                   decoration: InputDecoration(
                     labelText: 'I have to',
                     labelStyle: TextStyle(
@@ -142,10 +183,7 @@ class _AddTaskState extends State<AddTask> {
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
                         shadowColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(color: Colors.black)
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: Colors.black)),
                       ),
                     ),
                   ],
@@ -171,10 +209,7 @@ class _AddTaskState extends State<AddTask> {
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
                         shadowColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(color: Colors.black)
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: Colors.black)),
                       ),
                     ),
                   ],
@@ -184,13 +219,19 @@ class _AddTaskState extends State<AddTask> {
                 SizedBox(height: 40),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () => _selectTime(context),
+                    onPressed: () => _saveTask(),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
-                      child: Text(
-                        "SAVE",
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
+                      child: !loadingSave
+                          ? Text(
+                              "SAVE",
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                            )
+                          : Container(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(color: Colors.white),
+                            ),
                     ),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black,
