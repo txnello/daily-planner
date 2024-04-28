@@ -1,14 +1,19 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:dailyplanner/utils/notification-manager.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class Utils {
-  setScheduledNotification(int id, String task, String date, String time) {
+  setScheduledNotification(int id, String task, String date, String time) async {
     List<String> dateParts = date.split("-");
     List<String> timeParts = time.split(":");
+
     tz.initializeTimeZones();
+    final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZone));
+    
     tz.TZDateTime? scheduledDate = tz.TZDateTime(
       tz.local,
       int.parse(dateParts[0]),

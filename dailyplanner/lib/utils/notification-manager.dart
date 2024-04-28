@@ -8,7 +8,7 @@ class NotificationManager {
   FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> initNotification() async {
-    AndroidInitializationSettings initializationSettingsAndroid = const AndroidInitializationSettings('prova');
+    AndroidInitializationSettings initializationSettingsAndroid = const AndroidInitializationSettings('foreground');
 
     var initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
