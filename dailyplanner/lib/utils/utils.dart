@@ -1,4 +1,26 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:dailyplanner/utils/notification-manager.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
 class Utils {
+  setScheduledNotification(int id, String task, String date, String time) {
+    List<String> dateParts = date.split("-");
+    List<String> timeParts = time.split(":");
+    tz.initializeTimeZones();
+    tz.TZDateTime? scheduledDate = tz.TZDateTime(
+      tz.local,
+      int.parse(dateParts[0]),
+      int.parse(dateParts[1]),
+      int.parse(dateParts[2]),
+      int.parse(timeParts[0]),
+      int.parse(timeParts[1]),
+      0,
+    );
+    NotificationManager().showNotification(scheduledDate, id: id, title: 'Remember to:', body: task);
+  }
+
   String getMonth(int monthNumber) {
     String month = "";
 

@@ -20,7 +20,7 @@ class DatabaseHelper {
 
       if (await tableExists("tasks") == false) {
         Database db = await instance.db;
-        await db.execute('CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, task TEXT, date TEXT, time TEXT, active BOOLEAN, checked BOOLEAN)');
+        await db.execute('CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, task TEXT, date TEXT, time TEXT, active INTEGER, checked INTEGER)');
       }
     }
   }
@@ -34,22 +34,22 @@ class DatabaseHelper {
 
   Future<int> insertTask(String task, String date, String time) async {
     Database db = await instance.db;
-    var id = await db.insert('tasks', {'task': task, 'date': date, 'time': time, 'active': true, 'checked': false});
+    var id = await db.insert('tasks', {'task': task, 'date': date, 'time': time, 'active': 1, 'checked': 0});
     return id;
   }
 
   Future<List<Map<String, dynamic>>> getAllTasks(String date) async {
     Database db = await instance.db;
-    var tasks = await db.query('tasks', where: 'active = ? AND date = ?', whereArgs: [true, date], orderBy: 'time');
+    var tasks = await db.query('tasks', where: 'active = ? AND date = ?', whereArgs: [1, date], orderBy: 'time');
     return tasks;
   }
 
   Future<void> deleteTask(int id) async {
     Database db = await instance.db;
-    await db.update('tasks', {'active': false}, where: 'id = ?', whereArgs: [id]);
+    await db.update('tasks', {'active': 0}, where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<void> checkTask(int id, bool status) async {
+  Future<void> checkTask(int id, int status) async {
     Database db = await instance.db;
     await db.update('tasks', {'checked': status}, where: 'id = ?', whereArgs: [id]);
   }

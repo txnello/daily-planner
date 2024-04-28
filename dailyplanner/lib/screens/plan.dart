@@ -2,6 +2,7 @@
 
 import 'package:dailyplanner/screens/addTask.dart';
 import 'package:dailyplanner/utils/database-helper.dart';
+import 'package:dailyplanner/utils/notification-manager.dart';
 import 'package:dailyplanner/utils/utils.dart';
 import 'package:dailyplanner/widgets/custom-checkbox.dart';
 import 'package:dailyplanner/widgets/custom-date.dart';
@@ -105,6 +106,7 @@ class _PlanState extends State<Plan> {
     ).then((value) async {
       if (value == 'Yes') {
         await DatabaseHelper.instance.deleteTask(id);
+        await NotificationManager().cancelNotification(id);
         refreshPage();
       } else if (value == 'No') {}
     });
@@ -131,7 +133,13 @@ class _PlanState extends State<Plan> {
               checkedStatus[i] = !checkedStatus[i];
             });
 
-            await DatabaseHelper.instance.checkTask(todayTasks[i]["id"], checkedStatus[i]);
+            await DatabaseHelper.instance.checkTask(todayTasks[i]["id"], checkedStatus[i] ? 1 : 0);
+
+            if (checkedStatus[i]) {
+              await NotificationManager().cancelNotification(todayTasks[i]["id"]);
+            } else {
+              Utils().setScheduledNotification(todayTasks[i]["id"], todayTasks[i]["task"], todayTasks[i]["date"], todayTasks[i]["time"]);
+            }
           },
           onLongPress: () {
             _deletePopup(todayTasks[i]["id"]);
@@ -178,87 +186,106 @@ class _PlanState extends State<Plan> {
       onRefresh: () async {
         refreshPage();
       },
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 0,
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _addTask(),
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
+      child: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity != null && details.primaryVelocity! < 0) {
+            setState(() {
+              daysToAdd = 1;
+            });
+
+            refreshPage();
+          } else {
+            setState(() {
+              daysToAdd = 0;
+            });
+
+            refreshPage();
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            toolbarHeight: 0,
           ),
-          backgroundColor: Colors.black,
-        ),
-        body: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      daysToAdd == 1
-                          ? GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  daysToAdd = 0;
-                                });
-
-                                refreshPage();
-                              },
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                size: 35,
-                              ),
-                            )
-                          : SizedBox(),
-                      daysToAdd == 0
-                          ? GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  daysToAdd = 1;
-                                });
-
-                                refreshPage();
-                              },
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 35,
-                              ),
-                            )
-                          : SizedBox(),
-                    ],
-                  ),
-
-                  // date
-                  CustomDate(date: date, day: day),
-
-                  pageLoading
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.black,
-                          )))
-                      : Column(
-                          children: _getTasks(),
-                        ),
-
-                  SizedBox(height: 85)
-                ],
-              ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => _addTask(),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
             ),
-          ],
+            backgroundColor: Colors.black,
+          ),
+          body: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+
+                    // header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        daysToAdd == 1
+                            ? GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    daysToAdd = 0;
+                                  });
+
+                                  refreshPage();
+                                },
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  size: 35,
+                                ),
+                              )
+                            : SizedBox(),
+                        daysToAdd == 0
+                            ? GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    daysToAdd = 1;
+                                  });
+
+                                  refreshPage();
+                                },
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 35,
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+
+                    // date
+                    CustomDate(date: date, day: day),
+
+                    // tasks
+                    pageLoading
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 50),
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.black,
+                            )))
+                        : Column(
+                            children: _getTasks(),
+                          ),
+
+                    SizedBox(height: 85)
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

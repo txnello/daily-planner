@@ -3,6 +3,7 @@
 import 'package:dailyplanner/utils/database-helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dailyplanner/utils/utils.dart';
 
 class AddTask extends StatefulWidget {
   final int daysToAdd;
@@ -16,16 +17,17 @@ class _AddTaskState extends State<AddTask> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
 
-  FocusNode focusNode = FocusNode();
   bool isFocused = false;
-
   bool loadingSave = false;
+
   final TextEditingController taskController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
 
+    // set correct date
     if (widget.daysToAdd == 0) {
       setState(() {
         selectedDate = DateTime.now();
@@ -36,6 +38,7 @@ class _AddTaskState extends State<AddTask> {
       });
     }
 
+    // check if task field has focus
     focusNode.addListener(() {
       setState(() {
         isFocused = focusNode.hasFocus;
@@ -66,6 +69,14 @@ class _AddTaskState extends State<AddTask> {
       });
   }
 
+  String formatTimeOfDay(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final time = DateTime(today.year, today.month, today.day, timeOfDay.hour, timeOfDay.minute);
+
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+  }
+
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -78,22 +89,18 @@ class _AddTaskState extends State<AddTask> {
       });
   }
 
-  String formatTimeOfDay(TimeOfDay timeOfDay) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final time = DateTime(today.year, today.month, today.day, timeOfDay.hour, timeOfDay.minute);
-
-    // Formattare l'orario come "hh:mm"
-    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
-  }
-
   _saveTask() async {
     setState(() {
       loadingSave = true;
     });
 
-    await DatabaseHelper.instance.insertTask(taskController.text, selectedDate.toLocal().toString().split(' ')[0], formatTimeOfDay(selectedTime));
+    String date = selectedDate.toLocal().toString().split(' ')[0];
+    String time = formatTimeOfDay(selectedTime);
+
+    int id = await DatabaseHelper.instance.insertTask(taskController.text, date, time);
     Navigator.pop(context);
+
+    Utils().setScheduledNotification(id, taskController.text, date, time);
   }
 
   @override
