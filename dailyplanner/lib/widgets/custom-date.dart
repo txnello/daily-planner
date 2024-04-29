@@ -20,11 +20,11 @@ class _CustomDateState extends State<CustomDate> {
       children: [
         Text(
           widget.date,
-          style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
         ),
         Text(
           widget.day,
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: TextStyle(fontSize: 22, color: Colors.grey),
         ),
       ],
     );
