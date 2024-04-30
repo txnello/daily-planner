@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, curly_braces_in_flow_control_structures, use_build_context_synchronously, sized_box_for_whitespace
 
 import 'package:dailyplanner/utils/database-helper.dart';
+import 'package:dailyplanner/utils/datetime-manager.dart';
 import 'package:flutter/material.dart';
 import 'package:dailyplanner/utils/utils.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -59,7 +60,7 @@ class _AddTaskState extends State<AddTask> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(2000),
+      firstDate: selectedDate,
       lastDate: DateTime(2101),
     );
 
@@ -97,10 +98,26 @@ class _AddTaskState extends State<AddTask> {
     String date = selectedDate.toLocal().toString().split(' ')[0];
     String time = formatTimeOfDay(selectedTime);
 
+    DateTimeManager dtm = DateTimeManager();
+    dtm.split(date, time);
+
+    DateTime selectedDt = DateTime(dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minutes);
+    if (selectedDt.isBefore(DateTime.now())) {
+      setState(() {
+        loadingSave = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('select_date_future').tr(),
+      ));
+
+      return;
+    }
+
     int id = await DatabaseHelper.instance.insertTask(taskController.text, date, time);
     Navigator.pop(context);
 
-    Utils().setScheduledNotification(context, id, taskController.text, date, time);
+    Utils().setScheduledNotification(context, id, taskController.text, dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minutes);
   }
 
   @override

@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:dailyplanner/screens/addTask.dart';
 import 'package:dailyplanner/utils/database-helper.dart';
+import 'package:dailyplanner/utils/datetime-manager.dart';
 import 'package:dailyplanner/utils/notification-manager.dart';
 import 'package:dailyplanner/utils/utils.dart';
 import 'package:dailyplanner/widgets/custom-checkbox.dart';
@@ -161,7 +162,9 @@ class _PlanState extends State<Plan> {
             if (checkedStatus[i]) {
               await NotificationManager().cancelNotification(todayTasks[i]["id"]);
             } else {
-              Utils().setScheduledNotification(context, todayTasks[i]["id"], todayTasks[i]["task"], todayTasks[i]["date"], todayTasks[i]["time"]);
+              DateTimeManager dtm = DateTimeManager();
+              dtm.split(todayTasks[i]["date"], todayTasks[i]["time"]);
+              Utils().setScheduledNotification(context, todayTasks[i]["id"], todayTasks[i]["task"], dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minutes);
             }
           },
           onLongPress: () {

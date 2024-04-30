@@ -31,5 +31,6 @@
     "generic_saturday": "Saturday",
     "generic_sunday": "Sunday",
 
-    "add_task": "Add a task"
+    "add_task": "Add a task",
+    "select_date_future": "Please, select a date and time in the future."
 }

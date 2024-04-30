@@ -8,21 +8,18 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:easy_localization/easy_localization.dart';
 
 class Utils {
-  setScheduledNotification(BuildContext context, int id, String task, String date, String time) async {
-    List<String> dateParts = date.split("-");
-    List<String> timeParts = time.split(":");
-
+  setScheduledNotification(BuildContext context, int id, String task, int year, int month, int day, int hour, int minutes) async {
     tz.initializeTimeZones();
     final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZone));
     
     tz.TZDateTime? scheduledDate = tz.TZDateTime(
       tz.local,
-      int.parse(dateParts[0]),
-      int.parse(dateParts[1]),
-      int.parse(dateParts[2]),
-      int.parse(timeParts[0]),
-      int.parse(timeParts[1]),
+      year,
+      month,
+      day,
+      hour,
+      minutes,
       0,
     );
     NotificationManager().showNotification(scheduledDate, id: id, title: context.tr('generic_remember_to') + ':', body: task);
