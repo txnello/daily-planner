@@ -7,7 +7,8 @@ import 'package:dailyplanner/utils/utils.dart';
 import 'package:dailyplanner/widgets/custom-checkbox.dart';
 import 'package:dailyplanner/widgets/custom-date.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 
 class Plan extends StatefulWidget {
   const Plan({super.key});
@@ -28,8 +29,6 @@ class _PlanState extends State<Plan> {
   @override
   void initState() {
     super.initState();
-
-    refreshPage();
   }
 
   refreshPage() {
@@ -75,9 +74,33 @@ class _PlanState extends State<Plan> {
 
   initDate() {
     setState(() {
-      date = focusDate.day.toString() + " " + Utils().getMonth(focusDate.month);
-      day = Utils().getWeekday(focusDate.weekday);
+      if (ui.window.locale.languageCode != "it") {
+        String app = "th";
+
+        if (focusDate.day.toString() == "1" || focusDate.day.toString() == "21" || focusDate.day.toString() == "31") {
+          app = "st";
+        }
+
+        if (focusDate.day.toString() == "2" || focusDate.day.toString() == "22") {
+          app = "nd";
+        }
+
+        if (focusDate.day.toString() == "3" || focusDate.day.toString() == "23") {
+          app = "rd";
+        }
+
+        date = Utils().getMonth(context, focusDate.month) + " " + focusDate.day.toString() + app;
+      } else {
+        date = focusDate.day.toString() + " " + Utils().getMonth(context, focusDate.month);
+      }
+      day = Utils().getWeekday(context, focusDate.weekday);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    refreshPage();
+    super.didChangeDependencies();
   }
 
   _deletePopup(int id) {
@@ -85,20 +108,20 @@ class _PlanState extends State<Plan> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Deletion of the task'),
-          content: Text('Are you sure you want to delete this task?'),
+          title: Text('task_deletion_title').tr(),
+          content: Text('task_deletion_text').tr(),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop('No');
               },
-              child: Text('No'),
+              child: Text('generic_no').tr(),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop('Yes');
               },
-              child: Text('Yes'),
+              child: Text('generic_yes').tr(),
             ),
           ],
         );
@@ -138,7 +161,7 @@ class _PlanState extends State<Plan> {
             if (checkedStatus[i]) {
               await NotificationManager().cancelNotification(todayTasks[i]["id"]);
             } else {
-              Utils().setScheduledNotification(todayTasks[i]["id"], todayTasks[i]["task"], todayTasks[i]["date"], todayTasks[i]["time"]);
+              Utils().setScheduledNotification(context, todayTasks[i]["id"], todayTasks[i]["task"], todayTasks[i]["date"], todayTasks[i]["time"]);
             }
           },
           onLongPress: () {
@@ -161,9 +184,9 @@ class _PlanState extends State<Plan> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
                 child: Text(
-                  "Add a task",
+                  "add_task",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
+                ).tr(),
               ),
               style: ElevatedButton.styleFrom(
                 primary: Colors.black,

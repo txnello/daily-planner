@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:dailyplanner/utils/notification-manager.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:easy_localization/easy_localization.dart';
 
 class Utils {
-  setScheduledNotification(int id, String task, String date, String time) async {
+  setScheduledNotification(BuildContext context, int id, String task, String date, String time) async {
     List<String> dateParts = date.split("-");
     List<String> timeParts = time.split(":");
 
@@ -23,78 +25,78 @@ class Utils {
       int.parse(timeParts[1]),
       0,
     );
-    NotificationManager().showNotification(scheduledDate, id: id, title: 'Remember to:', body: task);
+    NotificationManager().showNotification(scheduledDate, id: id, title: context.tr('generic_remember_to') + ':', body: task);
   }
 
-  String getMonth(int monthNumber) {
+  String getMonth(BuildContext context, int monthNumber) {
     String month = "";
 
     switch (monthNumber) {
       case 1:
-        month = "January";
+        month = context.tr('generic_january');
         break;
       case 2:
-        month = "February";
+        month = context.tr('generic_february');
         break;
       case 3:
-        month = "March";
+        month = context.tr('generic_march');
         break;
       case 4:
-        month = "April";
+        month = context.tr('generic_april');
         break;
       case 5:
-        month = "May";
+        month = context.tr('generic_may');
         break;
       case 6:
-        month = "June";
+        month = context.tr('generic_june');
         break;
       case 7:
-        month = "July";
+        month = context.tr('generic_july');
         break;
       case 8:
-        month = "August";
+        month = context.tr('generic_august');
         break;
       case 9:
-        month = "September";
+        month = context.tr('generic_september');
         break;
       case 10:
-        month = "October";
+        month = context.tr('generic_october');
         break;
       case 11:
-        month = "November";
+        month = context.tr('generic_november');
         break;
       case 12:
-        month = "December";
+        month = context.tr('generic_december');
         break;
     }
 
     return month;
   }
 
-  String getWeekday(int weekday) {
+  String getWeekday(BuildContext context, int weekday) {
     String day = "";
 
     switch (weekday) {
       case 1:
-        day = "Monday";
+        day = context.tr('generic_monday');
         break;
       case 2:
-        day = "Tuesday";
+        day = context.tr('generic_tuesday');
         break;
       case 3:
-        day = "Wednesday";
+        day = context.tr('generic_wednesday');
         break;
       case 4:
-        day = "Thursday";
+        day = context.tr('generic_thursday');
         break;
       case 5:
-        day = "Friday";
+        day = context.tr('generic_friday');
         break;
       case 6:
-        day = "Saturday";
+        day = context.tr('generic_saturday');
         break;
       case 7:
-        day = "Sunday";
+        day = context.tr('generic_sunday');
         break;
     }
 

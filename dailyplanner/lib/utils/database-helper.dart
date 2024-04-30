@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {

@@ -1,0 +1,35 @@
+{
+    "task_deletion_title": "Cancellazione del task",
+    "task_deletion_text": "Sei sicuro che vuoi cancellare questo task?",
+
+    "generic_no": "No",
+    "generic_yes": "Sì",
+    "generic_i_have_to": "Devo ricordarmi di",
+    "generic_remember_to": "Ricordati di",
+    "generic_on": "Il",
+    "generic_at": "Alle",
+    "generic_save": "Salva",
+
+    "generic_january": "Gennaio",
+    "generic_february": "Febbraio",
+    "generic_march": "Marzo",
+    "generic_april": "Aprile",
+    "generic_may": "Maggio",
+    "generic_june": "Giugno",
+    "generic_july": "Luglio",
+    "generic_august": "Agosto",
+    "generic_september": "Settembre",
+    "generic_october": "Ottobre",
+    "generic_november": "Novembre",
+    "generic_december": "Dicembre",
+
+    "generic_monday": "Lunedì",
+    "generic_tuesday": "Martedì",
+    "generic_wednesday": "Mercoledì",
+    "generic_thursday": "Giovedì",
+    "generic_friday": "Venerdì",
+    "generic_saturday": "Sabato",
+    "generic_sunday": "Domenica",
+
+    "add_task": "Aggiungi un task"
+}

@@ -2,8 +2,8 @@
 
 import 'package:dailyplanner/utils/database-helper.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:dailyplanner/utils/utils.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddTask extends StatefulWidget {
   final int daysToAdd;
@@ -100,7 +100,7 @@ class _AddTaskState extends State<AddTask> {
     int id = await DatabaseHelper.instance.insertTask(taskController.text, date, time);
     Navigator.pop(context);
 
-    Utils().setScheduledNotification(id, taskController.text, date, time);
+    Utils().setScheduledNotification(context, id, taskController.text, date, time);
   }
 
   @override
@@ -142,9 +142,9 @@ class _AddTaskState extends State<AddTask> {
                       ),
                     ),
                     Text(
-                      "ADD TASK",
+                      "add_task",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                    ),
+                    ).tr(),
                     SizedBox(width: 45)
                   ],
                 ),
@@ -155,7 +155,7 @@ class _AddTaskState extends State<AddTask> {
                   focusNode: focusNode,
                   controller: taskController,
                   decoration: InputDecoration(
-                    labelText: 'I have to',
+                    labelText: context.tr('generic_i_have_to'),
                     labelStyle: TextStyle(
                       color: Colors.black,
                     ),
@@ -176,7 +176,7 @@ class _AddTaskState extends State<AddTask> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'on ',
+                      context.tr('generic_on').toLowerCase() + ' ',
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
@@ -202,7 +202,7 @@ class _AddTaskState extends State<AddTask> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'at ',
+                      context.tr('generic_at').toLowerCase() + ' ',
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
@@ -231,7 +231,7 @@ class _AddTaskState extends State<AddTask> {
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
                       child: !loadingSave
                           ? Text(
-                              "SAVE",
+                              context.tr('generic_save').toUpperCase(),
                               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                             )
                           : Container(
