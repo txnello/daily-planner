@@ -22,7 +22,7 @@ class Utils {
       minutes,
       0,
     );
-    NotificationManager().showNotification(scheduledDate, id: id, title: context.tr('generic_remember_to') + ':', body: task);
+    NotificationManager().showNotification(scheduledDate, id: id, title: hour.toString() + ':' + minutes.toString(), body: task);
   }
 
   String getMonth(BuildContext context, int monthNumber) {
