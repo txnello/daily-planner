@@ -12,7 +12,7 @@ class Utils {
     tz.initializeTimeZones();
     final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZone));
-    
+
     tz.TZDateTime? scheduledDate = tz.TZDateTime(
       tz.local,
       year,
@@ -22,7 +22,15 @@ class Utils {
       minutes,
       0,
     );
-    NotificationManager().showNotification(scheduledDate, id: id, title: hour.toString() + ':' + minutes.toString(), body: task);
+
+    DateTime selectedDt = DateTime(year, month, day, hour, minutes);
+    if (selectedDt.isBefore(DateTime.now())) {
+      return;
+    }
+
+    String stringMinutes = minutes.toString();
+    if (minutes < 10) stringMinutes = "0" + stringMinutes;
+    NotificationManager().showNotification(scheduledDate, id: id, title: hour.toString() + ':' + stringMinutes, body: task);
   }
 
   String getMonth(BuildContext context, int monthNumber) {
