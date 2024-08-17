@@ -8,8 +8,10 @@ class NotificationManager {
   FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> initNotification() async {
+    // init Android notifications
     AndroidInitializationSettings initializationSettingsAndroid = const AndroidInitializationSettings('foreground');
 
+    // init iOS notifications
     var initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -17,15 +19,19 @@ class NotificationManager {
       onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {}
     );
 
+    // create notification settings
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS
     );
+
+    // init notifications with settings
     await notificationsPlugin.initialize(initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {}
     );
   }
 
+  // get notification details
   notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails('channelId', 'channelName', importance: Importance.max),
@@ -33,6 +39,7 @@ class NotificationManager {
     );
   }
 
+  // show notification to the user
   Future showNotification(tz.TZDateTime scheduledDate, {int id = 0, String? title, String? body, String? payLoad}) async {
     return notificationsPlugin.zonedSchedule(
       id,
@@ -45,6 +52,7 @@ class NotificationManager {
     );
   }
 
+  // unschedule notification
   Future<void> cancelNotification(int id) async {
     await notificationsPlugin.cancel(id);
   }

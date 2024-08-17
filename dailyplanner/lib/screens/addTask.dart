@@ -47,6 +47,7 @@ class _AddTaskState extends State<AddTask> {
     });
   }
 
+  // reformat the string date
   String formatDate(String inputDateStr) {
     DateFormat inputFormat = DateFormat("yyyy-MM-dd");
     DateFormat outputFormat = DateFormat("dd/MM/yyyy");
@@ -56,6 +57,7 @@ class _AddTaskState extends State<AddTask> {
     return outputDateStr;
   }
 
+  // select date with picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -70,6 +72,7 @@ class _AddTaskState extends State<AddTask> {
       });
   }
 
+  // get time
   String formatTimeOfDay(TimeOfDay timeOfDay) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -78,6 +81,7 @@ class _AddTaskState extends State<AddTask> {
     return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
   }
 
+  // select time from picker
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -90,6 +94,7 @@ class _AddTaskState extends State<AddTask> {
       });
   }
 
+  // save the task
   _saveTask() async {
     setState(() {
       loadingSave = true;
@@ -117,6 +122,7 @@ class _AddTaskState extends State<AddTask> {
     int id = await DatabaseHelper.instance.insertTask(taskController.text, date, time);
     Navigator.pop(context);
 
+    // schedule notification
     Utils().setScheduledNotification(context, id, taskController.text, dtm.year, dtm.month, dtm.day, dtm.hour, dtm.minutes);
   }
 

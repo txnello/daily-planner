@@ -73,6 +73,7 @@ class _PlanState extends State<Plan> {
     }
   }
 
+  // get written date to show on homepage
   initDate() {
     setState(() {
       if (ui.window.locale.languageCode != "it") {
@@ -104,6 +105,7 @@ class _PlanState extends State<Plan> {
     super.didChangeDependencies();
   }
 
+  // close the popup message
   _deletePopup(int id) {
     showDialog(
       context: context,
@@ -136,6 +138,7 @@ class _PlanState extends State<Plan> {
     });
   }
 
+  // add a new task
   _addTask() {
     Navigator.push(
       context,
@@ -147,6 +150,7 @@ class _PlanState extends State<Plan> {
     ).then((value) => refreshPage());
   }
 
+  // get list of tasks
   List<Widget> _getTasks() {
     List<Widget> tasks = [];
 
@@ -177,6 +181,7 @@ class _PlanState extends State<Plan> {
           )));
     }
 
+    // if there is no task to show, show a default message
     if (tasks.isEmpty) {
       tasks = [
         Padding(

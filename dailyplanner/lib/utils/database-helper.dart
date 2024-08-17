@@ -7,12 +7,14 @@ class DatabaseHelper {
 
   DatabaseHelper._internal();
 
+  // check if table already exists
   Future<bool> tableExists(String tableName) async {
     Database db = await instance.db;
     var result = await db.query('sqlite_master', where: 'name = ?', whereArgs: [tableName]);
     return result.isNotEmpty;
   }
 
+  // init the internal database
   initDB() async {
     if (_db == null) {
       _db = await openDatabase('tasksDatabase.db');
@@ -30,6 +32,8 @@ class DatabaseHelper {
     }
     return _db;
   }
+
+  /* Methods */
 
   Future<int> insertTask(String task, String date, String time) async {
     Database db = await instance.db;

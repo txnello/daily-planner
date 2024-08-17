@@ -5,6 +5,7 @@ class DateTimeManager {
   int hour = 0;
   int minutes = 0;
 
+  // split date time into year, month, day, hour and minutes
   split(String date, String time) {
     List<String> dateParts = date.split("-");
     List<String> timeParts = time.split(":");

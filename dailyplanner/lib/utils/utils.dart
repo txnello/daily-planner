@@ -8,11 +8,15 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:easy_localization/easy_localization.dart';
 
 class Utils {
+
+  // set when to show a notification
   setScheduledNotification(BuildContext context, int id, String task, int year, int month, int day, int hour, int minutes) async {
+    // get local timezone
     tz.initializeTimeZones();
     final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZone));
 
+    // set scheduled date and time
     tz.TZDateTime? scheduledDate = tz.TZDateTime(
       tz.local,
       year,
@@ -24,15 +28,20 @@ class Utils {
     );
 
     DateTime selectedDt = DateTime(year, month, day, hour, minutes);
+
+    // check if it is a valid date and time
     if (selectedDt.isBefore(DateTime.now())) {
       return;
     }
 
     String stringMinutes = minutes.toString();
     if (minutes < 10) stringMinutes = "0" + stringMinutes;
+
+    // schedule notification
     NotificationManager().showNotification(scheduledDate, id: id, title: hour.toString() + ':' + stringMinutes, body: task);
   }
 
+  // given month number get month name translated
   String getMonth(BuildContext context, int monthNumber) {
     String month = "";
 
@@ -78,6 +87,8 @@ class Utils {
     return month;
   }
 
+
+  // given week day number get week day name translated
   String getWeekday(BuildContext context, int weekday) {
     String day = "";
 
