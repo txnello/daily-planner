@@ -41,4 +41,4 @@ So I just had to set that, when creating the task, this schedule was also create
 ## Conclusions
 Learning how to best use a phone's internal memory and how to launch notifications without using external services like Firebase or OneSignal **has been very educational and I will keep it in mind**.
 
-[Download it from the Play Store!](https://play.google.com/store/apps/details?id=com.dailyplannerapp&hl=it)
+[Download it from GitHub!](https://github.com/txnello/daily-planner/raw/main/apk-daily-planner.apk)
